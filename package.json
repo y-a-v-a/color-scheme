@@ -1,0 +1,44 @@
+{
+  "name": "color-scheme",
+  "version": "1.0.0",
+  "description": "Modern ES Module for generating harmonious color schemes with extended functionality",
+  "main": "color-scheme.js",
+  "type": "module",
+  "scripts": {
+    "test": "node color-scheme.test.js"
+  },
+  "keywords": [
+    "color",
+    "color-scheme",
+    "color-palette",
+    "colors",
+    "design",
+    "palette",
+    "generator",
+    "harmony",
+    "complementary",
+    "analogous",
+    "triadic",
+    "tetradic"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "bugs": {
+    "url": ""
+  },
+  "homepage": "",
+  "exports": {
+    ".": "./color-scheme.js"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "files": [
+    "color-scheme.js",
+    "README.md"
+  ]
+}
