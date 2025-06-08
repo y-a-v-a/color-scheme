@@ -77,23 +77,23 @@ function runTests() {
     
     const baseHue = 120; // Green
     
-    // Test mono scheme
+    // Test mono scheme (default 4 colors, but mono only uses 1, rest are distributed)
     const mono = new ColorScheme();
     mono.fromHue(baseHue).setScheme('mono');
     const monoColors = mono.getColorSet();
-    assert(monoColors.length === 1, 'Mono scheme should have 1 color');
+    assert(monoColors.length === 4, 'Mono scheme with default 4 colors should have 4 color sets');
     
-    // Test contrast scheme
+    // Test contrast scheme (uses 2 colors, rest distributed)
     const contrast = new ColorScheme();
     contrast.fromHue(baseHue).setScheme('contrast');
     const contrastColors = contrast.getColorSet();
-    assert(contrastColors.length === 2, 'Contrast scheme should have 2 colors');
+    assert(contrastColors.length === 4, 'Contrast scheme with default 4 colors should have 4 color sets');
     
-    // Test triade scheme
+    // Test triade scheme (uses 3 colors, rest distributed)
     const triade = new ColorScheme();
     triade.fromHue(baseHue).setScheme('triade');
     const triadeColors = triade.getColorSet();
-    assert(triadeColors.length === 3, 'Triade scheme should have 3 colors');
+    assert(triadeColors.length === 4, 'Triade scheme with default 4 colors should have 4 color sets');
     
     // Test tetrade scheme
     const tetrade = new ColorScheme();
@@ -101,11 +101,11 @@ function runTests() {
     const tetradeColors = tetrade.getColorSet();
     assert(tetradeColors.length === 4, 'Tetrade scheme should have 4 colors');
     
-    // Test analogic scheme
+    // Test analogic scheme (uses 3 colors, rest distributed)
     const analogic = new ColorScheme();
     analogic.fromHue(baseHue).setScheme('analogic');
     const analogicColors = analogic.getColorSet();
-    assert(analogicColors.length === 3, 'Analogic scheme should have 3 colors');
+    assert(analogicColors.length === 4, 'Analogic scheme with default 4 colors should have 4 color sets');
     
     // Test analogic with complement
     const analogicComplement = new ColorScheme();
@@ -113,11 +113,11 @@ function runTests() {
     const analogicComplementColors = analogicComplement.getColorSet();
     assert(analogicComplementColors.length === 4, 'Analogic with complement should have 4 colors');
     
-    // Test split complementary scheme
+    // Test split complementary scheme (uses 3 colors, rest distributed)
     const splitComplement = new ColorScheme();
     splitComplement.fromHue(baseHue).setScheme('splitComplement');
     const splitComplementColors = splitComplement.getColorSet();
-    assert(splitComplementColors.length === 3, 'Split complementary scheme should have 3 colors');
+    assert(splitComplementColors.length === 4, 'Split complementary scheme with default 4 colors should have 4 color sets');
     
     // Test square scheme
     const square = new ColorScheme();
@@ -167,6 +167,19 @@ function runTests() {
     tints.fromHue(baseHue).setScheme('tints');
     const tintsColors = tints.getColorSet();
     assert(tintsColors.length === 4, 'Tints scheme should have 4 color sets by default');
+    
+    // Test schemes with natural color counts (note: min colorCount is 2)
+    const monoNatural = new ColorScheme({ colorCount: 1 });
+    monoNatural.fromHue(baseHue).setScheme('mono');
+    assert(monoNatural.getColorSet().length === 2, 'Mono scheme with 1 color (min 2) should have 2 color sets');
+    
+    const contrastNatural = new ColorScheme({ colorCount: 2 });
+    contrastNatural.fromHue(baseHue).setScheme('contrast');
+    assert(contrastNatural.getColorSet().length === 2, 'Contrast scheme with 2 colors should have 2 color sets');
+    
+    const triadeNatural = new ColorScheme({ colorCount: 3 });
+    triadeNatural.fromHue(baseHue).setScheme('triade');
+    assert(triadeNatural.getColorSet().length === 3, 'Triade scheme with 3 colors should have 3 color sets');
   }
   
   // Test saturation adjustment

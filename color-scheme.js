@@ -123,7 +123,7 @@ const simpleHash = (str) => {
 const simpleNoise = (x, y, seed = 0) => {
   // Simple octave noise approximation
   const rand = (x, y, s) => {
-    return (Math.sin(x * 12.9898 + y * 78.233 + s) * 43758.5453) % 1;
+    return Math.abs((Math.sin(x * 12.9898 + y * 78.233 + s) * 43758.5453)) % 1;
   };
   
   // Grid coordinates
@@ -191,7 +191,7 @@ class MutableColor {
   set_hue(h) {
     const avrg = (a, b, k) => a + Math.round((b - a) * k);
     
-    this.hue = Math.round(h % 360);
+    this.hue = Math.round(((h % 360) + 360) % 360);
     const d = this.hue % 15 + (this.hue - Math.floor(this.hue));
     const k = d / 15;
     
@@ -232,7 +232,7 @@ class MutableColor {
     }
     
     this.base_saturation = avrg(100, 100, k) / 100;
-    this.base_value /= 100;
+    this.base_value = this.base_value / 100;
   }
 
   /**
@@ -381,18 +381,17 @@ export class ColorScheme {
       },
       
       triade: () => {
-        // Three colors evenly distributed
+        // Three colors evenly distributed (120° apart for true triadic harmony)
         usedColors = Math.min(3, this.colorCount);
-        const dif = 60 * this._distance;
         
         if (usedColors >= 2) {
           this.colors[1].set_hue(h);
-          this.colors[1].rotate(180 - dif);
+          this.colors[1].rotate(120);
         }
         
         if (usedColors >= 3) {
           this.colors[2].set_hue(h);
-          this.colors[2].rotate(180 + dif);
+          this.colors[2].rotate(240);
         }
       },
       
@@ -517,7 +516,7 @@ export class ColorScheme {
           // Set custom saturation and value parameters
           for (let j = 0; j <= 3; j++) {
             const satAdjustment = 0.9 - (i * 0.15);  // Decrease saturation for lighter tints
-            this.colors[i].set_variant(j, tintPreset[j] * satAdjustment, tintPreset[j + 1]);
+            this.colors[i].set_variant(j, tintPreset[2 * j] * satAdjustment, tintPreset[2 * j + 1]);
           }
         }
       },
@@ -545,11 +544,13 @@ export class ColorScheme {
           const randomSatFactor = 0.5 + (hashValue % 100) / 200; // 0.5 to 1.0
           const randomValFactor = 0.5 + (hashValue % 150) / 300; // 0.5 to 1.0
           
+          // Set custom variant preset first, then modify
+          const customPreset = PRESETS.default.slice();
           for (let j = 0; j <= 3; j++) {
-            const baseSat = this.colors[i].get_saturation(j);
-            const baseVal = this.colors[i].get_value(j);
-            this.colors[i].set_variant(j, baseSat * randomSatFactor, baseVal * randomValFactor);
+            customPreset[2 * j] *= randomSatFactor;
+            customPreset[2 * j + 1] *= randomValFactor;
           }
+          this.colors[i].set_variant_preset(customPreset);
         }
       },
       
@@ -676,16 +677,19 @@ export class ColorScheme {
     }
     
     // For additional colors beyond the scheme's natural count,
-    // distribute evenly around the color wheel
-    for (let i = usedColors; i < this.colorCount; i++) {
-      this.colors[i].set_hue(h);
-      this.colors[i].rotate((360 / (this.colorCount - usedColors)) * (i - usedColors + 1));
+    // distribute evenly around the color wheel if more colors are requested
+    const remainingColors = this.colorCount - usedColors;
+    if (remainingColors > 0) {
+      for (let i = usedColors; i < this.colorCount; i++) {
+        this.colors[i].set_hue(h);
+        this.colors[i].rotate((360 / remainingColors) * (i - usedColors + 1));
+      }
     }
     
-    // Generate all color variations
+    // Generate color variations for all requested colors
     const output = [];
     for (let i = 0; i < this.colorCount; i++) {
-      // For each color, generate 4 variations (or fewer based on options)
+      // For each color, generate 4 variations
       for (let j = 0; j <= 3; j++) {
         output.push(this.colors[i].get_hex(this._web_safe, j));
       }
@@ -972,9 +976,9 @@ export class ColorScheme {
   _adjustSaturation(hexColors) {
     return hexColors.map(hex => {
       // Convert hex to RGB
-      const r = parseInt(hex.substr(0, 2), 16) / 255;
-      const g = parseInt(hex.substr(2, 2), 16) / 255;
-      const b = parseInt(hex.substr(4, 2), 16) / 255;
+      const r = parseInt(hex.slice(0, 2), 16) / 255;
+      const g = parseInt(hex.slice(2, 4), 16) / 255;
+      const b = parseInt(hex.slice(4, 6), 16) / 255;
       
       // Convert RGB to HSV
       const [h, s, v] = this.rgb2hsv(r, g, b);

@@ -40,7 +40,7 @@ console.log(colors); // ['80ff80', '80ff40', 'a0ff60', 'c0ff80', ...]
 ### Basic Schemes
 - **`mono`** / **`monochromatic`**: Single color with variations
 - **`contrast`**: Base color + its complement (opposite on color wheel)
-- **`triade`**: Three colors evenly distributed around color wheel
+- **`triade`**: Three colors evenly distributed around color wheel (120° apart)
 - **`tetrade`**: Four colors forming a rectangle on color wheel
 - **`analogic`**: Adjacent colors on the color wheel
 - **`splitComplement`**: Base color + two colors adjacent to its complement
